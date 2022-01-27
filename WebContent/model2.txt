@@ -1,0 +1,186 @@
+model2.txt
+
+JavaEE(Enterprise Edition) : Servlet,JSP,JSTL,....
+
+JSP : 동적 컨텐츠(DB정보) 처리하기위한 페이지
+
+JSP / Servlet
+
+
+JSP 요청 -> login.jsp -> login_jsp.java -> login_jsp.class(서블릿)
+
+* 서블릿 : 자바를 사용하여 웹 애플리케이션을 구현하기 위한 기술
+        대부분의 사용자(클라이언트)정보를 멀티쓰레딩방식으로 처리 (자바)
+        요청에대한 처리를 동적으로 진행가능
+        
+        
+* 서블릿 생성 규칙
+1) javax.servlet.Servelt 인터페이스를 구현
+2) 1번 구현하지 않거나, 구현하기 힘든경우 
+    javax.servlet.http.HttpServlet 클래스를 상속
+3) doGet(), doPost() 사용해서 (오버라이딩) 필요한 동작을 구현
+   ( 파라미터로 javax.servlet.http.HttpServletRequest,
+      javax.servlet.http.HttpServletResonse)
+4) java.io.IOException,javax.servlet.ServletException을 구현해야함   
+5) web.xml 파일(배포서술자)을 서블릿과 url 매핑 (서블릿3.0 이후 선택-애너테이션)
+
+
+ * web.xml 매핑 설정
+ 
+  <servlet> 
+    <servlet-name> 실행할 서블릿명 </servlet-name>
+    <servlet-class> 실제 만들어놓은 서블릿 클래스 위치 </servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+     <servlet-name> 실행할 서블릿명 </servlet-name>
+     <url-pattern> 매핑할 주소 </url-pattern>
+  </servlet-mapping>
+  
+  
+  * JSP 파일을 Servlet 파일(.java)로 변경하는 규칙
+  1) jsp 페이지가 실행될때 (클라이언트 요청이 들어올때)
+  2) jsp 스크립틀릿 (<%  %>)  서블릿 service() 메서드 안에 구현
+  3) jsp 표현식 (<%= %>) 서블릿 service() 메서드 안에 out.println()으로 구현
+  4) jsp 선언문 (<%! %>) 서블릿의 멤버변수/메서드 형태로 변경
+  5) HTML 코드 서블릿의 service() 메서드 안에 out.write()로 구현
+  
+  
+  * MVC 패턴 p556~
+  
+   Model : 비지니스 로직(처리동작), DB처리 - java
+   View : 화면(디자인동작) - html/jsp
+   Controller : model과 view를 연결하는 동작 - Servlet
+  
+  [model1 방식] (view+model)
+  req =>  from.jsp => pro.jsp => view.jsp
+   
+  [model2 방식] (model / view / controller)
+  req   =>  Controller  < = > Model  <=>  DB
+  				||
+  			   View
+  			   
+  [model2 방식] (model / view / controller)
+  req => FrontController  < = > Controller(Action클래스) <=> Model(DAO)<=>DB
+  				||
+  			   View			   
+  			   
+  			   
+  			   
+  * Controller(서블릿) : Java(POJO)-JSP 파일을 연결
+    
+  * Model (Plain Old Java Object) : 그냥 자바파일, 비지니스 로직(처리동작)
+  
+  * View (JSP) : 사용자의 입력,출력하는 페이지
+  
+  
+  * MVC 패턴(model2방식)에서 주소줄에 .jsp 가 나타나면은
+    잘못된 페이지 호출
+  
+  * MVC 패턴에서의 주소 처리 방식 (페이지 이동)
+  1) response 방식 
+   response.sendRedirect("주소");
+	- 화면전환 o, 주소전환 o   
+	
+	ex)  주소 :  A.me -> B.me
+	     화면 :  A 페이지 -> B 페이지
+  
+  2) forward 방식
+   RequestDispatcher dis = request.getRequestDispatcher("주소");
+   dis.forward(request,response);
+    - 화면전환 o, 주소전환 x
+    
+  	ex)  주소 :  A.me -> A.me
+	     화면 :  A 페이지 -> B 페이지
+	     
+	     A.me -> b.jsp 페이지로 이동
+	     
+   
+   
+   
+   * 상대경로
+   
+   ./member/insertForm.jsp
+    => ./의미 : WebContent 폴더
+   
+   ./MemberJoin.me
+    => ./의미 : Model2 프로젝트
+  			   
+ CREATE TABLE `model2`.`itwill_member` (
+  `id` VARCHAR(50) NOT NULL,
+  `pass` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NULL,
+  `age` INT NULL,
+  `gender` VARCHAR(45) NULL,
+  `email` VARCHAR(200) NOT NULL,
+  `reg_date` TIMESTAMP NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE);
+  	
+  	
+  			   
+  			   
+  			   
+  			   
+  			   
+  p510~
+  * JSTL (Jsp Standard Tag Library)
+   -> 자카르타라는 회사에서 제공하는 자주 사용되는 기능을 모아놓은 
+     커스텀 태그
+    - 형태는 html 태그 형태이지만, 동작은 jsp/java코드를 수행
+    
+    1) CORE 라이브러리 (기본기능)
+       변수선언, 조건문, 반복문, 출력
+       페이지 이동
+    2) Fommatting 라이브러리 
+       국제화 동작(다국어처리)
+       형식화 날짜,숫자를 원하는 모양으로 변경
+       
+    3) DataBase라이브러리 (SQL관련기능)
+        CRUD 사용가능
+    4) XML 라이브러리
+   
+  
+    
+  
+  
+  * EL (Expression Language) p512~
+   JSP 코드의 표현식 <%= %> 대신해서 사용하는 표현식
+   
+   <%=   %>    <=>      ${ }
+   
+   * ${ 변수 } , ${ 객체.변수}, ${ 객체['변수'] }, ${객체 ["변수"]} 
+     ${ 식 } , ${연산자}
+   
+   * 변수의 데이터출력, 연산자, 내장객체
+   
+   * EL 내장객체
+   pageScope  : page 영역객체 
+   requestScope : request 영역객체
+   sessionScope : session 영역객체
+   applicationScope : application 영역객체 
+   
+   param : 파라미터값 
+   paramValues : 파라미터값을 배열로 가져옴 (체크박스)
+   
+   cookie : 쿠키객체 접근
+   header : Header 객체 정보
+   headerValues : Header 객체 정보를 배열로 가져옴
+   
+   initParam : Context정보(파라미터)를 초기화
+   pageContext : pageContext 객체 
+   
+   
+    
+   
+   			
+  
+  
+
+   
+
+
+
+
+
+
